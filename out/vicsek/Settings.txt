@@ -1,3 +1,0 @@
-NStepsSimulation = 1000
-NStepsEquilibration = 100
-NStepsSampling = 10
