@@ -16,6 +16,7 @@ int main() {
     sim.NStepsEquilibration = 100;
     sim.NStepsSampling = 10;
     sim.TimeStepSize = 1;
+    sim.PrintInitInfo = false;
 
     ofstream SettingsFile;
     SettingsFile.open("out/vicsek/Settings.txt");
@@ -24,13 +25,14 @@ int main() {
     SettingsFile << "NStepsSampling = " << sim.NStepsSampling << endl;
     SettingsFile.close();
 
-    sim.PrintInitInfo = false;
-    sim.NParticles = 1000;
+
     int times = 10;
     double Noise;
+    double Density;
     ofstream ResultsFile;
     system("rm -rf out/vicsek/*");
-    for(int n = 10; n < 100000; n*=10)
+
+    for(int n = 10; n <= 1000; n*=10)
     {
         system(("mkdir -p out/vicsek/" + to_string(n)).c_str());
         sim.NParticles = n;
@@ -54,6 +56,27 @@ int main() {
             ResultsFile.close();
         }
         ResultsFile.close();
+
+
+        for(Density = 0.1; Density <= 10; Density += 0.1)
+        {
+            string filenameDensity = "out/vicsek/" + to_string(sim.NParticles) + "/Density_" + to_string(Density) + ".txt";
+            ResultsFile.open(filenameDensity);
+            for(int i = 1 ; i <= times; ++i)
+            {
+                // Seed the random number generator
+                srand(i);
+                // Run the simulation for a given density
+                vector<double> Results = sim.RunVicsekForDensity(Density);
+                // Write the results to a file
+                for(int j = 0; j < Results.size(); ++j)
+                {
+                    ResultsFile << Results[j] << " ";
+                }
+                ResultsFile << endl;
+            }
+            ResultsFile.close();
+        }
     }
         
 
