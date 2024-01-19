@@ -87,7 +87,6 @@ public:
             UpdateCell(Current);
         }
     }
-
     int MCNParticleMove(double StepSize){
         double xold, yold, zold;
         int Naccepted = 0;
@@ -277,9 +276,8 @@ public:
 
     //----------------------------------------------------------------------------------------------
     //Run Functions (defined in Simulation.cpp)
-    void RunVicsekNoise(double NoiseStart, double NoiseEnd);
-    void RunVicsekDensity(double DensityStart, double DensityEnd);
     std::vector<double> RunVicsekForNoise(double Noise);
+    std::vector<double> RunVicsekForDensity(double Density);
     void RunHardSphere();
     void RunNPTPressure(double PressureStart, double PressureEnd, double PressureStep);
 

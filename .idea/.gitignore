@@ -7,6 +7,11 @@
 /dataSources/
 /dataSources.local.xml
 
-/out
+# Sensitive or high-churn files
+../out
+../.idea
+../oldcode
+
+
 
 

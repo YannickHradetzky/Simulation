@@ -4,151 +4,6 @@
 
 #include "Simulation.h"
 
-void Simulation::RunVicsekNoise(double NoiseStart, double NoiseEnd) {
-    std::cout << "Run Vicsek Simulation" << std::endl;
-    std::cout << "  Noise from " << NoiseStart << " to " << NoiseEnd << std::endl;
-    std::cout << "  with " << NParticles << " particles" << std::endl;
-    std::cout << "  for " << NStepsSimulation << " steps" << std::endl;
-    std::cout << "  with " << NStepsEquilibration << " equilibration steps" << std::endl;
-    std::cout << "  and " << NStepsSimulation / NStepsSampling << " sampling steps" << std::endl;
-
-
-    std::ofstream OutputFile;
-    DensityInit = 5;
-    OutputFolder = "out/vicsek/";
-    OutputFileObservables = "vabs_of_eta_forN" + std::to_string(NParticles) +"Rho" + std::to_string(lround(DensityInit)) +".txt";
-    OutputFile.open(OutputFolder + OutputFileObservables);
-
-    TimeStepSize = 1;
-    double NoiseStep = 0.1;
-    double VelocityInit = 0.3;
-    for(double Noise = NoiseStart; Noise <= NoiseEnd; Noise += NoiseStep){
-        std::cout << "Simulation for Noise: " << Noise << std::endl;
-        OutputFile << Noise << " ";
-        // Initialize the System
-        InitVicsek(VelocityInit);
-
-        std::cout << "  Eqilibtration" << std::endl;
-        // Equilibrate the System
-        for(int i = 0; i <= NStepsEquilibration; ++i)
-        {
-            VicsekUpdate(Noise);
-            if(i % (NStepsEquilibration / 4) == 0)
-            {
-                // Calculate absolut average velocity
-                double sumx = 0,  sumy = 0;
-                for(const auto &Current : Particles)
-                {
-                    sumx += Current->vx;
-                    sumy += Current->vy;
-                }
-                double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
-                std::cout << "    " << i << " vabs: " << vabs << std::endl;
-            }
-        }
-        
-        std::cout << "  Sampling" << std::endl;
-        for (int i = 0; i <= NStepsSimulation; ++i)
-        {
-            if(PrintProgress) PrintProgressBar(i, NStepsSimulation, 30);
-            VicsekUpdate(Noise);
-            // Count Number of Particles
-            int CountParticles = 0;
-            for(const auto &Current : Particles){
-                if(Current->x < Lx/2 && Current->x > -Lx/2 && Current->y < Ly/2 && Current->y > -Ly/2) CountParticles++;
-            }
-            if (CountParticles != NParticles){
-                std::cout << "Particle lost" << std::endl;
-                std::cout << "  Step: " << i << std::endl;
-                std::cout << "  Noise: " << Noise << std::endl;
-                std::cout << "  CountParticles: " << CountParticles << std::endl;
-                std::cout << "  NParticles: " << NParticles << std::endl;
-                exit(1);
-            }
-
-
-            if(i % NStepsSampling == 0){
-                // Calculate absolut average velocity
-                double sumx = 0,  sumy = 0;
-                for(const auto &Current : Particles)
-                {
-                    sumx += Current->vx;
-                    sumy += Current->vy;
-                }
-                double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
-                OutputFile << vabs << " ";
-            }
-        }
-        OutputFile << std::endl;
-    }
-    OutputFile.close();
-}
-void Simulation::RunVicsekDensity(double DensityStart, double DensityEnd) {
-    std::cout << "Run Vicsek Simulation" << std::endl;
-    std::cout << "  Density from " << DensityStart << " to " << DensityEnd << std::endl;
-    std::cout << "  with " << NParticles << " particles" << std::endl;
-    std::cout << "  for " << NStepsSimulation << " steps" << std::endl;
-    std::cout << "  with " << NStepsEquilibration << " equilibration steps" << std::endl;
-    std::cout << "  and " << NStepsSimulation / NStepsSampling << " sampling steps" << std::endl;
-
-    std::ofstream OutputFile;
-    double Noise = 1;
-    OutputFolder = "out/vicsek/";
-    OutputFileObservables = "vabs_of_rho_forN" + std::to_string(NParticles) +"Noise"
-                            + std::to_string(lround(Noise)) +".txt";
-    OutputFile.open(OutputFolder + OutputFileObservables);
-
-
-    TimeStepSize = 1;
-    double RhoStep = 0.1;
-    double VelocityInit = 0.3;
-    for(double Density = DensityStart; Density <= DensityEnd; Density += RhoStep){
-        std::cout << "Simulation for Density: " << Density << std::endl;
-        OutputFile << Density << " ";
-        // Initialize the System
-        DensityInit = Density;
-        InitVicsek(VelocityInit);
-        std::cout << "  Eqilibtration" << std::endl;
-        // Equilibrate the System
-        for(int i = 0; i <= NStepsEquilibration; ++i)
-        {
-            VicsekUpdate(Noise);
-            if(i % (NStepsEquilibration / 4) == 0)
-            {
-                // Calculate absolut average velocity
-                double sumx = 0,  sumy = 0;
-                for(const auto &Current : Particles)
-                {
-                    sumx += Current->vx;
-                    sumy += Current->vy;
-                }
-                double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
-                std::cout << "    " << i << " vabs: " << vabs << std::endl;
-            }
-        }
-        std::cout << "  Sampling" << std::endl;
-        for (int i = 0; i <= NStepsSimulation; ++i)
-        {
-            if(PrintProgress) PrintProgressBar(i, NStepsSimulation, 30);
-            VicsekUpdate(Noise);
-            if(i % NStepsSampling == 0){
-                // Calculate absolut average velocity
-                double sumx = 0,  sumy = 0;
-                for(const auto &Current : Particles)
-                {
-                    sumx += Current->vx;
-                    sumy += Current->vy;
-                }
-                double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
-                OutputFile << vabs << " ";
-            }
-        }
-        OutputFile << std::endl;
-    }
-    OutputFile.close();
-
-
-}
 std::vector<double> Simulation::RunVicsekForNoise(double Noise){
     DensityInit = 5;
     OutputFolder = "out/vicsek/N" + std::to_string(NParticles) + "/";
@@ -181,6 +36,70 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
     // Output.open(OutputFolder + OutputFileObservables);
     // Output << Noise << std::endl;
         
+
+    std::cout << "  Sampling" << std::endl;
+    std::vector<double> Results;
+    double SumVabs = 0;
+    double SumVabsSquared = 0;
+    for (int i = 0; i <= NStepsSimulation; ++i)
+    {
+        if(PrintProgress) PrintProgressBar(i, NStepsSimulation, 30);
+        VicsekUpdate(Noise);
+        // Count Number of Particles
+        int CountParticles = 0;
+        for(const auto &Current : Particles){
+            if(Current->x < Lx/2 && Current->x > -Lx/2 && Current->y < Ly/2 && Current->y > -Ly/2) CountParticles++;
+        }
+        // Check if all Particles are in the Box
+        if (CountParticles != NParticles){
+            std::cout << "Particle lost" << std::endl;
+            std::cout << "  Step: " << i << std::endl;
+            std::cout << "  Noise: " << Noise << std::endl;
+            std::cout << "  CountParticles: " << CountParticles << std::endl;
+            std::cout << "  NParticles: " << NParticles << std::endl;
+            exit(1);
+        }
+
+        if(i % NStepsSampling == 0){
+            // Calculate absolut average velocity
+            double sumx = 0,  sumy = 0;
+            for(const auto &Current : Particles)
+            {
+                sumx += Current->vx;
+                sumy += Current->vy;
+            }
+            double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
+            Results.push_back(vabs);
+        } 
+    }
+    return Results;
+}
+
+std::vector<double> Simulation::RunVicsekForDensity(double Density){
+    std::cout << "Simulation for Density: " << Density << std::endl;
+    // Initialize the System
+    double VelocityInit = 0.3;
+    double Noise = 1;
+    DensityInit = Density;
+    InitVicsek(VelocityInit);
+    std::cout << "  Eqilibtration" << std::endl;
+    // Equilibrate the System
+    for(int i = 0; i <= NStepsEquilibration; ++i)
+    {
+        VicsekUpdate(Noise);
+        if(i % (NStepsEquilibration / 4) == 0)
+        {
+            // Calculate absolut average velocity
+            double sumx = 0,  sumy = 0;
+            for(const auto &Current : Particles)
+            {
+                sumx += Current->vx;
+                sumy += Current->vy;
+            }
+            double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
+            std::cout << "    " << i << " vabs: " << vabs << std::endl;
+        }
+    }
 
     std::cout << "  Sampling" << std::endl;
     std::vector<double> Results;
