@@ -9,8 +9,10 @@
 
 # Sensitive or high-churn files
 /out/*
-../.idea
-../oldcode
+/oldcode/*
+/idea/*
+/.vscode/*
+
 
 
 
