@@ -239,7 +239,7 @@ public:
             std::cout << "      Density = " << Density << std::endl;
             std::cout << "      MinMeanDistance = " << MinMeanDistance << std::endl;
         }
-
+    
     }
     void InitRandom(double Mass, double Radius) {
         std::cout << "Initialize Random Particles with distributed Radius and Mass" << std::endl;

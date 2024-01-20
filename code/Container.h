@@ -30,67 +30,7 @@ class Container {
 public:
     //----------------------------------------------------------------------------------------------
     // Constructor and Destructor
-    Container(){
-        Lx = 0;
-        Ly = 0;
-        Lz = 0;
-        L = 0;
-        Dim = 0;
-        Volume = 0;
-        Surface = 0;
-        Area = 0;
-        Ncellsx = 0;
-        Ncellsy = 0;
-        Ncellsz = 0;
-        Ncells = 0;
-        //std::cout << "Default Container initialized" << std::endl;
-    };
-    Container(double lx0, double ly0, double lz0){
-        Lx = lx0;
-        Ly = ly0;
-        Lz = lz0;
-        if (Lx == Ly && Ly == Lz){
-            L = Lx;
-        }
-        else{
-            L = nan("Not Cubic");
-        }
-        Dim = 3;
-        Volume = Lx*Ly*Lz;
-        Surface = Lx*Ly*2 + Lx*Lz*2 + Ly*Lz*2;
-        Area = nan("Not 2D");
-        InitCells(1.0);
-        std::cout << "Container initialized" << std::endl;
-        std::cout << "  Lx = " << Lx << std::endl;
-        std::cout << "  Ly = " << Ly << std::endl;
-        std::cout << "  Lz = " << Lz << std::endl;
-        std::cout << "  Ncellsx = " << Ncellsx << std::endl;
-        std::cout << "  Ncellsy = " << Ncellsy << std::endl;
-        std::cout << "  Ncellsz = " << Ncellsz << std::endl;
-
-    };
-    Container(double lx0, double ly0){
-        Lx = lx0;
-        Ly = ly0;
-        Lz = 0;
-        if (Lx == Ly){
-            L = Lx;
-        }
-        else{
-            L = nan("Not Quadratic");
-        }
-        Dim = 2;
-        Volume = Lx*Ly*Lz;
-        Surface = Lx*Ly;
-        Area = Lx*Ly*2;
-        InitCells(1.0);
-        std::cout << "Container initialized" << std::endl;
-        std::cout << "  Lx = " << Lx << std::endl;
-        std::cout << "  Ly = " << Ly << std::endl;
-        std::cout << "  Ncellsx = " << Ncellsx << std::endl;
-        std::cout << "  Ncellsy = " << Ncellsy << std::endl;
-
-    }
+    Container(){};
     ~Container(){};
     //----------------------------------------------------------------------------------------------
     // Container Variables
