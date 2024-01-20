@@ -16,6 +16,7 @@ using namespace std;
 int main() {
 
     vector<thread> threads; // Store threads in a vector
+    system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist
     system("rm -rf out/vicsek/*"); // Remove previous results (if any)
     for (int n = 10; n < 10000; n *= 10) {
         cout << "n = " << n << endl;
