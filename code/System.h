@@ -156,14 +156,14 @@ public:
     }
     void InitVicsek(double Velocity)
     {
-        std::cout << "Initialize Vicsek" << std::endl;
+        //std::cout << "Initialize Vicsek" << std::endl;
         Particles.clear();
 
         if (NParticles == 0){
             std::cout << "  No NParticles given, set to 100" << std::endl;
             NParticles = 100;
         }else{
-            std::cout << "  with " << NParticles << " particles" << std::endl;
+            //std::cout << "  with " << NParticles << " particles" << std::endl;
         }
         if (DensityInit == 0){
             std::cout << "  No DensityInit given, set to 1" << std::endl;
@@ -177,7 +177,7 @@ public:
             Area = L*L;
             Dim = 2;
         }else{
-            std::cout << "  with Density " << DensityInit << std::endl;
+            //std::cout << "  with Density " << DensityInit << std::endl;
             Density = DensityInit;
             L = pow(NParticles / DensityInit, 1.0/2.0);
             Lx = Ly = L;

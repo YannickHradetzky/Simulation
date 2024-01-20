@@ -43,7 +43,7 @@ public:
         Ncellsy = 0;
         Ncellsz = 0;
         Ncells = 0;
-        std::cout << "Default Container initialized" << std::endl;
+        //std::cout << "Default Container initialized" << std::endl;
     };
     Container(double lx0, double ly0, double lz0){
         Lx = lx0;
@@ -114,15 +114,15 @@ public:
         }
         if(Ncellsx < 3 && Ncellsx > 0) {
             Ncellsx = 3;
-            std::cout << "  Ncellsx < 3, set to 3" << std::endl;
+            //std::cout << "  Ncellsx < 3, set to 3" << std::endl;
         }
         if(Ncellsy < 3 && Ncellsy > 0) {
             Ncellsy = 3;
-            std::cout << "  Ncellsy < 3, set to 3" << std::endl;
+            //std::cout << "  Ncellsy < 3, set to 3" << std::endl;
         }
         if(Ncellsz < 3 && Ncellsz > 0) {
             Ncellsz = 3;
-            std::cout << "  Ncellsz < 3, set to 3" << std::endl;
+            //std::cout << "  Ncellsz < 3, set to 3" << std::endl;
         }
 
         // Fill Cells with Pointers to empty Cells and set MyIndex as well as the Neighbour Cells (via Pointer)

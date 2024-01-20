@@ -9,11 +9,11 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
     OutputFolder = "out/vicsek/N" + std::to_string(NParticles) + "/";
     OutputFileObservables = "Vabs_Noise" + std::to_string(Noise) + ".txt";
 
-    std::cout << "Simulation for Noise: " << Noise << std::endl;
+    //std::cout << "Simulation for Noise: " << Noise << std::endl;
     // Initialize the System
     double VelocityInit = 0.3;
     InitVicsek(VelocityInit);
-    std::cout << "  Eqilibtration" << std::endl;
+    //std::cout << "  Eqilibtration" << std::endl;
     // Equilibrate the System
     for(int i = 0; i <= NStepsEquilibration; ++i)
     {
@@ -28,11 +28,11 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
                 sumy += Current->vy;
             }
             double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
-            std::cout << "    " << i << " vabs: " << vabs << std::endl;
+            //std::cout << "    " << i << " vabs: " << vabs << std::endl;
         }
     }
     
-    std::cout << "  Sampling" << std::endl;
+    //std::cout << "  Sampling" << std::endl;
     std::vector<double> Results;
     double SumVabs = 0;
     double SumVabsSquared = 0;
@@ -71,13 +71,13 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
 }
 
 std::vector<double> Simulation::RunVicsekForDensity(double Density){
-    std::cout << "Simulation for Density: " << Density << std::endl;
+    //std::cout << "Simulation for Density: " << Density << std::endl;
     // Initialize the System
     double VelocityInit = 0.3;
     double Noise = 1;
     DensityInit = Density;
     InitVicsek(VelocityInit);
-    std::cout << "  Eqilibtration" << std::endl;
+    //std::cout << "  Eqilibtration" << std::endl;
     // Equilibrate the System
     for(int i = 0; i <= NStepsEquilibration; ++i)
     {
@@ -92,11 +92,11 @@ std::vector<double> Simulation::RunVicsekForDensity(double Density){
                 sumy += Current->vy;
             }
             double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
-            std::cout << "    " << i << " vabs: " << vabs << std::endl;
+            //std::cout << "    " << i << " vabs: " << vabs << std::endl;
         }
     }
 
-    std::cout << "  Sampling" << std::endl;
+    //std::cout << "  Sampling" << std::endl;
     std::vector<double> Results;
     double SumVabs = 0;
     double SumVabsSquared = 0;
