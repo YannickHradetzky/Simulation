@@ -31,12 +31,7 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
             std::cout << "    " << i << " vabs: " << vabs << std::endl;
         }
     }
-    // open and write Noise to File
-    // std::ofstream Output;
-    // Output.open(OutputFolder + OutputFileObservables);
-    // Output << Noise << std::endl;
-        
-
+    
     std::cout << "  Sampling" << std::endl;
     std::vector<double> Results;
     double SumVabs = 0;
