@@ -8,43 +8,12 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
     double VelocityInit = 0.3;
     InitVicsek(VelocityInit);
     // Equilibrate the System
-    for(int i = 0; i <= NStepsEquilibration; ++i)
-    {
+    for(int i = 0; i <= NStepsEquilibration; ++i){
         VicsekUpdate(Noise);
-        if(i % (NStepsEquilibration / 4) == 0)
-        {
-            // Calculate absolut average velocity
-            double sumx = 0,  sumy = 0;
-            for(const auto &Current : Particles)
-            {
-                sumx += Current->vx;
-                sumy += Current->vy;
-            }
-            double vabs = sqrt(sumx*sumx + sumy*sumy) / (NParticles * VelocityInit);
-        }
     }
-    
     std::vector<double> Results;
-    double SumVabs = 0;
-    double SumVabsSquared = 0;
-    for (int i = 0; i <= NStepsSimulation; ++i)
-    {
-        if(PrintProgress) PrintProgressBar(i, NStepsSimulation, 30);
+    for (int i = 0; i <= NStepsSimulation; ++i){
         VicsekUpdate(Noise);
-        // Count Number of Particles
-        int CountParticles = 0;
-        for(const auto &Current : Particles){
-            if(Current->x < Lx/2 && Current->x > -Lx/2 && Current->y < Ly/2 && Current->y > -Ly/2) CountParticles++;
-        }
-        // Check if all Particles are in the Box
-        if (CountParticles != NParticles){
-            std::cout << "Particle lost" << std::endl;
-            std::cout << "  Step: " << i << std::endl;
-            std::cout << "  Noise: " << Noise << std::endl;
-            std::cout << "  CountParticles: " << CountParticles << std::endl;
-            std::cout << "  NParticles: " << NParticles << std::endl;
-            exit(1);
-        }
 
         if(i % NStepsSampling == 0){
             // Calculate absolut average velocity

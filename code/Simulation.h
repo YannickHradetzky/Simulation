@@ -82,7 +82,6 @@ public:
             Current->vy = Current->velocity * sin(Current->theta);
             Current->x += Current->vx * TimeStepSize;
             Current->y += Current->vy * TimeStepSize;
-            
             Current->ApplyCenteredPeriodicBoundaryConditions(Lx, Ly, Lz);
             UpdateCell(Current);
         }

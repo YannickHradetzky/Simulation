@@ -9,52 +9,53 @@
 #include "Simulation.h"
 #include "Potentials.h"
 
-// Compile with: g++ -std=c++11 -O3  code/main.cpp code/Simulation.cpp  -o main
+// Compile with: g++ -std=c++11 -O3 code/main.cpp code/Simulation.cpp -o main
 
 using namespace std;
 
 int main() {
 
     vector<thread> threads; // Store threads in a vector
-    system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist
+    system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist)
     system("rm -rf out/vicsek/*"); // Remove previous results (if any)
-    for (int n = 10; n < 10000; n *= 10) {
-        cout << "n = " << n << endl;
+
+    mutex globalMutex; // Mutex to synchronize access to shared variables
+
+    for (int n = 10; n <= 1000; n *= 10) {
         // create a folder for each value of n
         system(("mkdir -p out/vicsek/" + to_string(n)).c_str());
+        cout << "Running for n = " << n << endl;
+        vector<thread> nThreads; // Store threads for a specific number of particles
 
         for (double Noise = 0; Noise <= 2 * M_PI; Noise += 0.1) {
-            cout << "Noise = " << Noise << endl;
             // create a thread for each value of Noise
-            threads.emplace_back([n, Noise]() {
+            nThreads.emplace_back([n, Noise, &globalMutex]() {
                 // Create a new Simulation object for each thread
                 Simulation sim;
                 sim.NParticles = n;
                 sim.DensityInit = 10;
                 sim.NStepsSimulation = 1000;
                 sim.NStepsEquilibration = 100;
-                sim.NStepsSampling = 10;
+                sim.NStepsSampling = 1;
                 sim.TimeStepSize = 1;
                 sim.PrintInitInfo = false;
                 sim.PrintProgress = false;
 
-
                 string filenameNoise = "out/vicsek/" + to_string(sim.NParticles) + "/Noise_" + to_string(Noise) + ".txt";
-                
+
                 // Open the file in append mode
                 ofstream ResultsFile(filenameNoise);
 
                 // For each Noise value, run the simulation 10 times
-                for (int i = 1; i <= 10; ++i) {
+                for (int i = 1; i <= 100; ++i) {
                     // Use unique seed for each thread
                     srand(i * static_cast<unsigned int>(std::hash<std::thread::id>{}(std::this_thread::get_id())));
 
                     // Run the simulation for a given noise
                     vector<double> Results = sim.RunVicsekForNoise(Noise);
 
-                    // Use a lock to synchronize file writing
-                    static mutex fileMutex; // Static ensures it's shared among all threads
-                    lock_guard<mutex> lock(fileMutex);
+                    // Use the global mutex to synchronize file writing
+                    lock_guard<mutex> lock(globalMutex);
 
                     // Write the results to a file
                     for (int j = 0; j < Results.size(); ++j) {
@@ -63,17 +64,19 @@ int main() {
                     ResultsFile << endl;
                 }
                 ResultsFile.close();
+                cout << "Finished Noise = " << Noise << endl;
             });
         }
-    }
 
-    // Join all threads to ensure they finish before exiting
-    for (auto &t : threads) {
-        t.join();
+        // Join all threads for a specific number of particles
+        for (auto &t : nThreads) {
+            t.join();
+        }
     }
 
     return 0;
 }
+
 
 
 
