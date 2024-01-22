@@ -15,7 +15,7 @@
 int NSim = 1000;
 int NEquil = 100;
 int NSamp = 1;
-double DensityInit = 10;
+double DensityInit = 4;
 double TimeStepSize = 1;
 int times = 10;
 
@@ -31,7 +31,7 @@ int main() {
 
     mutex globalMutex; // Mutex to synchronize access to shared variables
 
-    for (int n = 10; n <= 1000; n *= 10) {
+    for (int n = 10; n <= 10000; n *= 10) {
         // create a folder for each value of n
         system(("mkdir -p out/vicsek/" + to_string(n)).c_str());
         cout << "Running for n = " << n << endl;
