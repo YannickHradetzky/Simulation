@@ -77,12 +77,15 @@ public:
             if (Count > 0) ThetaMean = ThetaSum / Count;
             Current->theta = ThetaMean + Noise * (rand() / (double)RAND_MAX);
             
-            // Update positions using the calculated velocities
+            // Update velocities
             Current->vx = Current->velocity * cos(Current->theta);
             Current->vy = Current->velocity * sin(Current->theta);
+        }
+        // Update positions using the calculated velocities
+        for (const auto &Current : Particles) {
             Current->x += Current->vx * TimeStepSize;
             Current->y += Current->vy * TimeStepSize;
-            Current->ApplyCenteredPeriodicBoundaryConditions(Lx, Ly, Lz);
+            Current->ApplyPeriodicBoundaryConditions(Lx, Ly, Lz);
             UpdateCell(Current);
         }
     }
