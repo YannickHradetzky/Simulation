@@ -11,6 +11,16 @@
 
 // Compile with: g++ -std=c++11 -O3 code/main.cpp code/Simulation.cpp -o main
 
+// Settings
+int NSim = 1000;
+int NEquil = 100;
+int NSamp = 1;
+double DensityInit = 10;
+double TimeStepSize = 1;
+int times = 10;
+
+
+
 using namespace std;
 
 int main() {
@@ -27,27 +37,28 @@ int main() {
         cout << "Running for n = " << n << endl;
         vector<thread> nThreads; // Store threads for a specific number of particles
 
+        // Parallelize the loop for different values of Noise
         for (double Noise = 0; Noise <= 2 * M_PI; Noise += 0.1) {
             // create a thread for each value of Noise
             nThreads.emplace_back([n, Noise, &globalMutex]() {
                 // Create a new Simulation object for each thread
                 Simulation sim;
                 sim.NParticles = n;
-                sim.DensityInit = 10;
-                sim.NStepsSimulation = 1000;
-                sim.NStepsEquilibration = 100;
-                sim.NStepsSampling = 1;
-                sim.TimeStepSize = 1;
+                sim.DensityInit = DensityInit;
+                sim.NStepsSimulation = NSim;
+                sim.NStepsEquilibration = NEquil;
+                sim.NStepsSampling = NSamp;
+                sim.TimeStepSize = TimeStepSize;
                 sim.PrintInitInfo = false;
                 sim.PrintProgress = false;
 
                 string filenameNoise = "out/vicsek/" + to_string(sim.NParticles) + "/Noise_" + to_string(Noise) + ".txt";
 
-                // Open the file in append mode
+                // Open the file in
                 ofstream ResultsFile(filenameNoise);
 
-                // For each Noise value, run the simulation 10 times
-                for (int i = 1; i <= 100; ++i) {
+                // For each Noise value, run the simulation multiple times
+                for (int i = 1; i <= times; ++i) {
                     // Use unique seed for each thread
                     srand(i * static_cast<unsigned int>(std::hash<std::thread::id>{}(std::this_thread::get_id())));
 
@@ -68,6 +79,48 @@ int main() {
             });
         }
 
+        // Parallelize the loop for different values of Density
+        for (double Density = 0.1; Density <= 10; Density += 0.1){
+            // create a thread for each value of Density
+            nThreads.emplace_back([n, Density, &globalMutex]() {
+                // Create a new Simulation object for each thread
+                Simulation sim;
+                sim.NParticles = n;
+                sim.DensityInit = Density;
+                sim.NStepsSimulation = NSim;
+                sim.NStepsEquilibration = NEquil;
+                sim.NStepsSampling = NSamp;
+                sim.TimeStepSize = TimeStepSize;
+                sim.PrintInitInfo = false;
+                sim.PrintProgress = false;
+
+                string filenameDensity = "out/vicsek/" + to_string(sim.NParticles) + "/Density_" + to_string(Density) + ".txt";
+
+                // Open the file in
+                ofstream ResultsFile(filenameDensity);
+
+                // For each Density value, run the simulation multiple times
+                for (int i = 1; i <= times; ++i) {
+                    // Use unique seed for each thread
+                    srand(i * static_cast<unsigned int>(std::hash<std::thread::id>{}(std::this_thread::get_id())));
+
+                    // Run the simulation for a given noise
+                    vector<double> Results = sim.RunVicsekForDensity(Density);
+
+                    // Use the global mutex to synchronize file writing
+                    lock_guard<mutex> lock(globalMutex);
+
+                    // Write the results to a file
+                    for (int j = 0; j < Results.size(); ++j) {
+                        ResultsFile << Results[j] << " ";
+                    }
+                    ResultsFile << endl;
+                }
+                ResultsFile.close();
+                cout << "Finished Density = " << Density << endl;
+            });
+        }
+        
         // Join all threads for a specific number of particles
         for (auto &t : nThreads) {
             t.join();
