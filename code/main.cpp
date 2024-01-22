@@ -16,6 +16,7 @@ int NSim = 1000;
 int NEquil = 100;
 int NSamp = 10;
 double DensityInit = 4;
+double NoiseForDensity = 2;
 double TimeStepSize = 1;
 int times = 10;
 
@@ -32,7 +33,7 @@ int main() {
 
     mutex globalMutex; // Mutex to synchronize access to shared variables
 
-    for (int n = 10; n <= 1000; n *= 10) {
+    for (int n = 10; n <= 10000; n *= 10) {
         // create a folder for each value of n
         system(("mkdir -p out/vicsek/" + to_string(n)).c_str());
         cout << "Running for n = " << n << endl;
@@ -106,7 +107,7 @@ int main() {
                     srand(i * static_cast<unsigned int>(std::hash<std::thread::id>{}(std::this_thread::get_id())));
 
                     // Run the simulation for a given noise
-                    vector<double> Results = sim.RunVicsekForDensity(Density);
+                    vector<double> Results = sim.RunVicsekForDensity(Density, NoiseForDensity);
 
                     // Use the global mutex to synchronize file writing
                     lock_guard<mutex> lock(globalMutex);

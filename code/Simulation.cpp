@@ -30,10 +30,10 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
     return Results;
 }
 
-std::vector<double> Simulation::RunVicsekForDensity(double Density){
+std::vector<double> Simulation::RunVicsekForDensity(double Density, double NoiseForDensity){
     // Initialize the System
     double VelocityInit = 0.3;
-    double Noise = 0.5;
+    double Noise = NoiseForDensity;
     DensityInit = Density;
     InitVicsek(VelocityInit);
     // Equilibrate the System

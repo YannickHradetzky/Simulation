@@ -55,9 +55,11 @@ public:
     void VicsekUpdate(double Noise) {
         double ThetaSum, ThetaMean, dr;
         int Count;
+        // Loop over all particles
         for (const auto &Current : Particles) {
             ThetaMean = ThetaSum = 0;
             Count = 0;
+            // Loop over all particles in the same cell
             for (const auto &Other : Current->mycell->ParticlesInCell) {
                 dr = Current->CalculateDistanceToParticle(Other, Lx, Ly, Lz);
                 if (dr < InteractionRadius) {
@@ -65,6 +67,7 @@ public:
                     Count++;
                 }
             }
+            // Loop over all particles in the neighboring cells
             for (const auto &NeighborCell : Current->mycell->NeighbourCells) {
                 for (const auto &Other : NeighborCell->ParticlesInCell) {
                     dr = Current->CalculateDistanceToParticle(Other, Lx, Ly, Lz);
@@ -74,19 +77,20 @@ public:
                     }
                 }
             }
+            // Calculate the mean angle of all particles in the interaction radius
             if (Count > 0) ThetaMean = ThetaSum / Count;
+            // Update the angle of the current particle
             Current->theta = ThetaMean + Noise * (rand() / (double)RAND_MAX);
-            
             // Update velocities
             Current->vx = Current->velocity * cos(Current->theta);
             Current->vy = Current->velocity * sin(Current->theta);
         }
         // Update positions using the calculated velocities
         for (const auto &Current : Particles) {
-            Current->x += Current->vx * TimeStepSize;
-            Current->y += Current->vy * TimeStepSize;
+            Current->x += Current->vx * TimeStepSize; // Update x Position
+            Current->y += Current->vy * TimeStepSize; // Update y Position
             Current->ApplyPeriodicBoundaryConditions(Lx, Ly, Lz);
-            UpdateCell(Current);
+            UpdateCell(Current); // Update Cell of Particle
         }
     }
     int MCNParticleMove(double StepSize){
@@ -279,7 +283,7 @@ public:
     //----------------------------------------------------------------------------------------------
     //Run Functions (defined in Simulation.cpp)
     std::vector<double> RunVicsekForNoise(double Noise);
-    std::vector<double> RunVicsekForDensity(double Density);
+    std::vector<double> RunVicsekForDensity(double Density, double NoiseForDensity);
     void RunHardSphere();
     void RunNPTPressure(double PressureStart, double PressureEnd, double PressureStep);
 
