@@ -32,7 +32,7 @@ int main() {
 
     mutex globalMutex; // Mutex to synchronize access to shared variables
 
-    for (int n = 10; n <= 10000; n *= 10) {
+    for (int n = 10; n <= 1000; n *= 10) {
         // create a folder for each value of n
         system(("mkdir -p out/vicsek/" + to_string(n)).c_str());
         cout << "Running for n = " << n << endl;
@@ -85,7 +85,7 @@ int main() {
         }
     }
 
-    for(int n = 10; n <= 10000; n*= 10 ){
+    for(int n = 10; n <= 1000; n*= 10 ){
         cout << "Running for n = " << n << endl;
         vector<thread> nThreads; // Store threads for a specific number of particles
         // Parallelize the loop for different values of Density
