@@ -94,7 +94,7 @@ int main() {
                             Temp = sim.ComputeOrientationCorrelationVicsek(AvgX, AvgY);
 
                             // 3) Add to Results
-                            for(int k = 0; k < Temp.size(); ++k){
+                                for(int k = 0; k < Temp.size(); ++k){
                                 Results[k] += Temp[k];
                             }
                         }
