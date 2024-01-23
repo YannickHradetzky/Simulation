@@ -28,12 +28,12 @@ using namespace std;
 
 int main() {
     vector<thread> threads; // Store threads in a vector
-    system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist)
-    system("rm -rf out/vicsek/*"); // Remove previous results (if any)
+    //system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist)
+    //system("rm -rf out/vicsek/*"); // Remove previous results (if any)
 
     mutex globalMutex; // Mutex to synchronize access to shared variables
 
-    for (int n = 10; n <= 10000; n *= 10) {
+    for (int n = 10; n <= 1000; n *= 10) {
         // create a folder for each value of n
         system(("mkdir -p out/vicsek/" + to_string(n)).c_str());
         cout << "Running for n = " << n << endl;
@@ -72,7 +72,7 @@ int main() {
                     }
 
                     vector<double> Temp;
-                    vector<double> Results(sim.NParticles, 0);
+                    vector<double> Results(200, 0);
                     
                     // Main simulation loop
                     for(int j = 0; j < sim.NStepsSimulation; ++j){
