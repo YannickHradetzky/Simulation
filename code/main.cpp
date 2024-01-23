@@ -106,12 +106,12 @@ int main() {
                         ResultsFile << Results[k] << " ";
                     }
                     ResultsFile << endl;   
+                    }
                 }
                 ResultsFile.close();
                 cout << "Finished Noise = " << Noise << endl;
             });
         }
-        
         // Join all threads for a specific number of particles
         for (auto &t : nThreads) {
             t.join();
