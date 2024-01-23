@@ -98,6 +98,8 @@ int main() {
                                 Results[k] += Temp[k];
                             }
                         }
+                    lock_guard<mutex> lock(globalMutex);
+
                     // Normalize and Print Results
                     for(int k = 0; k < Results.size(); ++k){
                         Results[k] /= (sim.NStepsSimulation / sim.NStepsSampling);
