@@ -27,8 +27,8 @@ using namespace std;
 
 int main() {
     vector<thread> threads; // Store threads in a vector
-    system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist)
-    system("rm -rf out/vicsek/*"); // Remove previous results (if any)
+    // system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist)
+    // system("rm -rf out/vicsek/*"); // Remove previous results (if any)
 
     mutex globalMutex; // Mutex to synchronize access to shared variables
 
