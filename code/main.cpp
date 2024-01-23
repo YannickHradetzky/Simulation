@@ -71,9 +71,7 @@ int main() {
                         sim.VicsekUpdate(Noise);
                     }
 
-
                     vector<double> Temp;
-                    
                     vector<double> Results(sim.NParticles, 0);
                     
                     // Main simulation loop
@@ -94,15 +92,20 @@ int main() {
                             // 2) Calculate Correlation
                             Temp = sim.ComputeOrientationCorrelationVicsek(AvgX, AvgY);
 
-                            // 3) Write results to file
-                            globalMutex.lock();
-                            for (int k = 0; k < Results.size(); ++k) {
-                                ResultsFile << Results[k] << " ";
+                            // 3) Add to Results
+                            for(int k = 0; k < Temp.size(); ++k){
+                                Results[k] += Temp[k];
                             }
-
-                        ResultsFile << AvgVel << endl;
+                        }
+                    // Normalize Results
+                    for(int k = 0; k < Results.size(); ++k){
+                        Results[k] /= sim.NStepsSimulation / sim.NStepsSampling;
                     }
-                    
+                    // Write Results to file
+                    for(int k = 0; k < Results.size(); ++k){
+                        ResultsFile << Results[k] << " ";
+                    }
+                    ResultsFile << endl;   
                 }
                 ResultsFile.close();
                 cout << "Finished Noise = " << Noise << endl;

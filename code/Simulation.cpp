@@ -64,13 +64,24 @@ std::vector<double> Simulation::ComputeOrientationCorrelationVicsek(double AvgVe
     double RStep = 0.5 * L / NBins;
 
     std::vector<double>Correlation (NBins, 0.0); 
-
+    std :: vector<double> CorrelationCount (NBins, 0.0);
     for(const auto &Current : Particles){
         for(const auto &Other : Particles){
-            if(Current != Other)
+            if(Current != Other){
+                double dr = Current->CalculateDistanceToParticle(Other, Lx, Ly, Lz);
+                int Bin = (int) (dr / RStep + 0.5);
+                if(Bin < NBins ) {
+                    Correlation[Bin] += Current->theta - Other->theta;
+                    CorrelationCount[Bin] += 1;
+                }
+            }
         }
     }
-
+    for(int i = 0; i < NBins; ++i){
+        if(CorrelationCount[i] != 0){
+            Correlation[i] /= CorrelationCount[i];
+        }
+    }
     return Correlation;
 }
 
