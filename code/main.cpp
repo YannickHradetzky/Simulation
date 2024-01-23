@@ -54,7 +54,7 @@ int main() {
                 sim.PrintInitInfo = false;
                 sim.PrintProgress = false;
 
-                string filenameNoise = "out/vicsek/" + to_string(sim.NParticles) + "/Corr" + to_string(Noise) + ".txt";
+                string filenameNoise = "out/vicsek/" + to_string(sim.NParticles) + "/Corr_" + to_string(Noise) + ".txt";
 
                 // Open the file in
                 ofstream ResultsFile(filenameNoise);
