@@ -28,14 +28,15 @@ using namespace std;
 
 int main() {
     vector<thread> threads; // Store threads in a vector
-    //system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist)
-    //system("rm -rf out/vicsek/*"); // Remove previous results (if any)
+    system("mkdir -p out/vicsek"); // Create output directory (if it doesn't exist)
+    system("rm -rf out/vicsek/*"); // Remove previous results (if any)
 
     mutex globalMutex; // Mutex to synchronize access to shared variables
 
     for (int n = 10; n <= 1000; n *= 10) {
         // create a folder for each value of n
         system(("mkdir -p out/vicsek/" + to_string(n)).c_str());
+
         cout << "Running for n = " << n << endl;
         vector<thread> nThreads; // Store threads for a specific number of particles
         // Parallelize the loop for different values of Noise
@@ -97,12 +98,9 @@ int main() {
                                 Results[k] += Temp[k];
                             }
                         }
-                    // Normalize Results
+                    // Normalize and Print Results
                     for(int k = 0; k < Results.size(); ++k){
-                        Results[k] /= sim.NStepsSimulation / sim.NStepsSampling;
-                    }
-                    // Write Results to file
-                    for(int k = 0; k < Results.size(); ++k){
+                        Results[k] /= (sim.NStepsSimulation / sim.NStepsSampling);
                         ResultsFile << Results[k] << " ";
                     }
                     ResultsFile << endl;   
