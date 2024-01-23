@@ -18,6 +18,7 @@ int NSamp = 10;
 double DensityInit = 4;
 double NoiseForDensity = 0.5;
 double TimeStepSize = 1;
+double VelInit = 0.3; // Initial velocity of particles
 int times = 10;
 
 
@@ -52,7 +53,7 @@ int main() {
                 sim.PrintInitInfo = false;
                 sim.PrintProgress = false;
 
-                string filenameNoise = "out/vicsek/" + to_string(sim.NParticles) + "/Noise_" + to_string(Noise) + ".txt";
+                string filenameNoise = "out/vicsek/" + to_string(sim.NParticles) + "/Corr" + to_string(Noise) + ".txt";
 
                 // Open the file in
                 ofstream ResultsFile(filenameNoise);
@@ -62,75 +63,52 @@ int main() {
                     // Use unique seed for each thread
                     srand(i * static_cast<unsigned int>(std::hash<std::thread::id>{}(std::this_thread::get_id())));
 
-                    // Run the simulation for a given noise
-                    vector<double> Results = sim.RunVicsekForNoise(Noise);
+                    // Initialize the system
+                    sim.InitVicsek(VelInit);
 
-                    // Use the global mutex to synchronize file writing
-                    lock_guard<mutex> lock(globalMutex);
-
-                    // Write the results to a file
-                    for (int j = 0; j < Results.size(); ++j) {
-                        ResultsFile << Results[j] << " ";
+                    // Equilibrate the system
+                    for(int i = 0; i < sim.NStepsEquilibration; ++i) {
+                        sim.VicsekUpdate(Noise);
                     }
-                    ResultsFile << endl;
+
+
+                    vector<double> Temp;
+                    
+                    vector<double> Results(sim.NParticles, 0);
+                    
+                    // Main simulation loop
+                    for(int j = 0; j < sim.NStepsSimulation; ++j){
+                        sim.VicsekUpdate(Noise);
+                        if (j % sim.NStepsSampling == 0){
+                            // Sample the system
+                            // 1) Calculate Average Velocity
+                            double AvgX = 0; 
+                            double AvgY = 0;
+                            for (const auto &p : sim.Particles) {
+                                AvgX += p->vx;
+                                AvgY += p->vy;
+                            }
+                            AvgX /= sim.NParticles;
+                            AvgY /= sim.NParticles;
+                            double AvgVel = sqrt(AvgX * AvgX + AvgY * AvgY);
+                            // 2) Calculate Correlation
+                            Temp = sim.ComputeOrientationCorrelationVicsek(AvgX, AvgY);
+
+                            // 3) Write results to file
+                            globalMutex.lock();
+                            for (int k = 0; k < Results.size(); ++k) {
+                                ResultsFile << Results[k] << " ";
+                            }
+
+                        ResultsFile << AvgVel << endl;
+                    }
+                    
                 }
                 ResultsFile.close();
                 cout << "Finished Noise = " << Noise << endl;
             });
         }
         
-        // Join all threads for a specific number of particles
-        for (auto &t : nThreads) {
-            t.join();
-        }
-    }
-
-    for(int n = 10; n <= 10000; n*= 10 ){
-        cout << "Running for n = " << n << endl;
-        vector<thread> nThreads; // Store threads for a specific number of particles
-        // Parallelize the loop for different values of Density
-        for (double Density = 0.1; Density <= 10; Density += 0.1){
-
-            // create a thread for each value of Density
-            nThreads.emplace_back([n, Density, &globalMutex]() {
-                // Create a new Simulation object for each thread
-                Simulation sim;
-                sim.NParticles = n;
-                sim.DensityInit = Density;
-                sim.NStepsSimulation = NSim;
-                sim.NStepsEquilibration = NEquil;
-                sim.NStepsSampling = NSamp;
-                sim.TimeStepSize = TimeStepSize;
-                sim.PrintInitInfo = false;
-                sim.PrintProgress = false;
-
-                string filenameDensity = "out/vicsek/" + to_string(sim.NParticles) + "/Density_" + to_string(Density) + ".txt";
-
-                // Open the file in
-                ofstream ResultsFile(filenameDensity);
-
-                // For each Density value, run the simulation multiple times
-                for (int i = 1; i <= times; ++i) {
-                    // Use unique seed for each thread
-                    srand(i * static_cast<unsigned int>(std::hash<std::thread::id>{}(std::this_thread::get_id())));
-
-                    // Run the simulation for a given noise
-                    vector<double> Results = sim.RunVicsekForDensity(Density, NoiseForDensity);
-
-                    // Use the global mutex to synchronize file writing
-                    lock_guard<mutex> lock(globalMutex);
-
-                    // Write the results to a file
-                    for (int j = 0; j < Results.size(); ++j) {
-                        ResultsFile << Results[j] << " ";
-                    }
-                    ResultsFile << endl;
-                }
-                ResultsFile.close();
-                cout << "Finished Density = " << Density << endl;
-            });
-        }
-
         // Join all threads for a specific number of particles
         for (auto &t : nThreads) {
             t.join();

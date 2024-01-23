@@ -60,30 +60,17 @@ std::vector<double> Simulation::RunVicsekForDensity(double Density, double Noise
 
 
 std::vector<double> Simulation::ComputeOrientationCorrelationVicsek(double AvgVelocityX, double AvgVelocityY){
-    double RMax = 100; 
-    double RStep = 1;
+    int NBins = 200; 
+    double RStep = 0.5 * L / NBins;
 
-    std::vector<double> Correlation;
-    for(double r = 0; r < RMax; r += RStep){
-        int count = 0;
-        double sum = 0;
-        for(const auto &Current : Particles){
-            for(const auto &Other : Particles){
-                if(Current != Other){
-                        double dr = Current->CalculateDistanceToParticle(Other,Lx,Ly,Lz);
-                        if(dr < r + RStep && dr > r){
-                            count++;
-                            double currentdvx = Current->vx - AvgVelocityX;
-                            double currentdvy = Current->vy - AvgVelocityY;
-                            double otherdvx = Other->vx - AvgVelocityX;
-                            double otherdvy = Other->vy - AvgVelocityY;
-                            sum  += currentdvx * otherdvx + currentdvy * otherdvy;
-                        }
-                    }
-                }
-            }
-        Correlation.push_back(sum * count / count );
+    std::vector<double>Correlation (NBins, 0.0); 
+
+    for(const auto &Current : Particles){
+        for(const auto &Other : Particles){
+            if(Current != Other)
         }
+    }
+
     return Correlation;
 }
 
