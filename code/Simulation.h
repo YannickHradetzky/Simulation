@@ -59,8 +59,8 @@ public:
         for (const auto &Current : Particles) {
             ThetaMean = ThetaSum = 0;
             Count = 0;
-            // Loop over all particles in the same cell
-            for (const auto &Other : Current->mycell->ParticlesInCell) {
+            // Loop over all particles in the same cell including itself
+            for (const auto &Other : Current->mycell->ParticlesInCell) { 
                 dr = Current->CalculateDistanceToParticle(Other, Lx, Ly, Lz);
                 if (dr < InteractionRadius) {
                     ThetaSum += Other->theta;
@@ -284,6 +284,7 @@ public:
     //Run Functions (defined in Simulation.cpp)
     std::vector<double> RunVicsekForNoise(double Noise);
     std::vector<double> RunVicsekForDensity(double Density, double NoiseForDensity);
+    std::vector<double> ComputeOrientationCorrelationVicsek(double AvgVelocityX, double AvgVelocityY);
     void RunHardSphere();
     void RunNPTPressure(double PressureStart, double PressureEnd, double PressureStep);
 

@@ -14,9 +14,9 @@ std::vector<double> Simulation::RunVicsekForNoise(double Noise){
     std::vector<double> Results;
     for (int i = 0; i <= NStepsSimulation; ++i){
         VicsekUpdate(Noise);
-
+        // Calculate absolut average velocity
         if(i % NStepsSampling == 0){
-            // Calculate absolut average velocity
+            
             double sumx = 0,  sumy = 0;
             for(const auto &Current : Particles)
             {
@@ -40,7 +40,6 @@ std::vector<double> Simulation::RunVicsekForDensity(double Density, double Noise
     for(int i = 0; i <= NStepsEquilibration; ++i){
         VicsekUpdate(Noise);
     }
-
     std::vector<double> Results;
     for (int i = 0; i <= NStepsSimulation; ++i){
         VicsekUpdate(Noise);
@@ -58,6 +57,36 @@ std::vector<double> Simulation::RunVicsekForDensity(double Density, double Noise
     }
     return Results;
 }
+
+
+std::vector<double> Simulation::ComputeOrientationCorrelationVicsek(double AvgVelocityX, double AvgVelocityY){
+    double RMax = 100; 
+    double RStep = 1;
+
+    std::vector<double> Correlation;
+    for(double r = 0; r < RMax; r += RStep){
+        int count = 0;
+        double sum = 0;
+        for(const auto &Current : Particles){
+            for(const auto &Other : Particles){
+                if(Current != Other){
+                        double dr = Current->CalculateDistanceToParticle(Other,Lx,Ly,Lz);
+                        if(dr < r + RStep && dr > r){
+                            count++;
+                            double currentdvx = Current->vx - AvgVelocityX;
+                            double currentdvy = Current->vy - AvgVelocityY;
+                            double otherdvx = Other->vx - AvgVelocityX;
+                            double otherdvy = Other->vy - AvgVelocityY;
+                            sum  += currentdvx * otherdvx + currentdvy * otherdvy;
+                        }
+                    }
+                }
+            }
+        Correlation.push_back(sum * count / count );
+        }
+    return Correlation;
+}
+
 
 void Simulation::RunHardSphere() {
     std::cout << "Hard Sphere OldSimulation" << std::endl;

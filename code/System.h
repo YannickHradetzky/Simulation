@@ -15,11 +15,9 @@
 
 
 
-
 // define general PotentialFunction and ForceFunction Functions
 using PotentialFunction1 = double (*)(double); // for example distance r between two particles
 using ForceFunction1 = double (*)(double); // for example distance r between two particles
-
 
 
 
