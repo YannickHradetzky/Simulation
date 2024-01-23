@@ -58,6 +58,8 @@ int main() {
 
                 // Open the file in
                 ofstream ResultsFile(filenameNoise);
+                
+
 
                 // For each Noise value, run the simulation multiple times
                 for (int i = 1; i <= times; ++i) {
@@ -71,10 +73,8 @@ int main() {
                     for(int i = 0; i < sim.NStepsEquilibration; ++i) {
                         sim.VicsekUpdate(Noise);
                     }
-
                     vector<double> Temp;
                     vector<double> Results(200, 0);
-                    
                     // Main simulation loop
                     for(int j = 0; j < sim.NStepsSimulation; ++j){
                         sim.VicsekUpdate(Noise);
@@ -109,7 +109,7 @@ int main() {
                     ResultsFile << endl;   
                 }
                 ResultsFile.close();
-                cout << "Finished Noise = " << Noise << endl;
+                cout << "Finished for Noise = " << Noise << endl;
             });
         }
         // Join all threads for a specific number of particles

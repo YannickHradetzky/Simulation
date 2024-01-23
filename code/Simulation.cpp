@@ -71,7 +71,7 @@ std::vector<double> Simulation::ComputeOrientationCorrelationVicsek(double AvgVe
                 double dr = Current->CalculateDistanceToParticle(Other, Lx, Ly, Lz);
                 int Bin = (int) (dr / RStep + 0.5);
                 if(Bin < NBins ) {
-                    Correlation[Bin] += Current->theta - Other->theta;
+                    Correlation[Bin] += cos(Current->theta - Other->theta);
                     CorrelationCount[Bin] += 1;
                 }
             }
