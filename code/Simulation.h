@@ -80,7 +80,7 @@ public:
             // Calculate the mean angle of all particles in the interaction radius
             if (Count > 0) ThetaMean = ThetaSum / Count;
             // Update the angle of the current particle
-            Current->theta = ThetaMean + Noise * 2 * (rand() / (double)RAND_MAX - 1); // Random Number between -1 and 1
+            Current->theta = ThetaMean + Noise * (rand() / (double)RAND_MAX); // Random Number between -1 and 1
             // Update velocities
             Current->vx = Current->velocity * cos(Current->theta);
             Current->vy = Current->velocity * sin(Current->theta);
